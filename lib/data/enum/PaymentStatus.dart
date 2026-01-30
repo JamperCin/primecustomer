@@ -1,0 +1,9 @@
+enum PaymentStatus {
+  PROCESSING,
+  FAILED,
+  UNPAID,
+  PAID,
+  UNKNOWN,
+  INITIATED,
+  WAITING_CALLBACK,
+}

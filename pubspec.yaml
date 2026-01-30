@@ -40,7 +40,31 @@ dependencies:
   firebase_messaging: 15.2.5
   flutter_local_notifications: ^19.4.0
   permission_handler: ^12.0.1
-  responsive_sizer: ^3.3.1
+  flutter_timezone: ^4.1.0
+  date_format: ^2.0.7
+  emoji_picker_flutter: ^4.4.0
+  flutter_shimmer: ^2.1.2
+  flutter_native_contact_picker: ^0.0.10
+  in_app_review: ^2.0.11
+  flutter_rating_bar: ^4.0.1
+  local_auth: ^2.2.0
+  package_info_plus: ^8.3.0
+  path_provider: ^2.1.3
+  provider: ^6.1.2
+  qr_code_scanner_plus: ^2.0.10+1
+  qr_flutter: ^4.1.0
+  scrollable_positioned_list: ^0.3.8
+  url_launcher: ^6.3.0
+  webview_flutter: ^4.8.0
+  badges: ^3.1.2
+  sliding_up_panel: ^2.0.0+1
+  timeago: ^3.6.1
+  scroll_to_index: ^3.0.1
+  easy_image_viewer: ^1.5.1
+  timeline_tile: ^2.0.0
+  diagonal_decoration: ^1.0.2+3
+  flutter_launcher_icons: ^0.14.3
+  country_picker: ^2.0.26
   core_module:
     git:
       url: https://github.com/JamperCin/core_package
@@ -50,6 +74,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  build_runner: ^2.4.12
+  json_serializable: ^6.8.0
+  freezed: ^2.5.7
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
@@ -86,17 +113,24 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
-  #
+  fonts:
+    - family: SfUI
+      fonts:
+        - asset: assets/fonts/sf_ui/sf_light.otf
+          weight: 400
+        - asset: assets/fonts/sf_ui/sf_thin.otf
+          weight: 300
+        - asset: assets/fonts/sf_ui/sf_medium.otf
+          weight: 500
+        - asset: assets/fonts/sf_ui/sf_semibold.otf
+          weight: 600
+        - asset: assets/fonts/sf_ui/sf_bold.otf
+          weight: 700
+        - asset: assets/fonts/sf_ui/sf_ultralight.otf
+          weight: 200
+        - asset: assets/fonts/sf_ui/sf_heavy.otf
+          weight: 800
+ 
+  
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

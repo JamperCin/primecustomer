@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "446094824789",
+    "project_id": "prime-296009",
+    "storage_bucket": "prime-296009.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:446094824789:android:0111e5fcdf939235164bdc",
+        "android_client_info": {
+          "package_name": "com.jackbuild.prime.customer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "446094824789-0mjtifv2ud1peiajaj01bb0prio08unc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jackbuild.prime.customer",
+            "certificate_hash": "5b2c38a71ce576a409ca5df5c9b2fa0781f91c19"
+          }
+        },
+        {
+          "client_id": "446094824789-ikarp6eie9m8h7iq6bp806vg2ci2446a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCP1X-6ZfegDso5ra-WlHHkuDs4Tt1qimg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "446094824789-ikarp6eie9m8h7iq6bp806vg2ci2446a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "446094824789-cci30l8p8rm07ts8eoharpone8n48bjk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.jackbuild.prime.customer",
+                "app_store_id": "1546084735"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,46 @@
+class PrefConstants {
+  static const String FULL_NAME = "full_name";
+  static const String FIRST_NAME = "first_name";
+  static const String LAST_NAME = "surname";
+  static const String EMAIL = "email";
+  static const String GENDER = "gender";
+  static const String PHONE_NUMBER = "telephone";
+  static const String COUNTRY = "country";
+  static const String USER_DETAILS = "_USER_DETAILS";
+  static const String FOR_NAME = "forname";
+  static const String USERNAME = "username";
+  static const String ADDRESS = "address";
+  static const String PASSWORD = "password";
+  static const String TOKEN = "token";
+  static const String IS_LOGIN = "is_login";
+  static const String IS_INTRO_SHOWN = "is_intro";
+  static const String NEED_VERIFICATION = "need_verification";
+  static const String IS_USER_ACTIVE = "IS_USER_ACTIVE";
+  static const String IS_USER_BLOCKED = "IS_USER_BLOCKED";
+  static const String PERSON_ID = "PERSON_ID";
+  static const String USER_ID = "USER_ID";
+  static const String PERSON_TYPE_ID = "PERSON_TYPE_ID";
+  static const String PERSON_TYPE = "PERSON_TYPE";
+  static const String VERIFIED_TOKEN = "VERIFIED_TOKEN";
+  static const String SECURITY_PIN = "SECURITY_PIN";
+  static const String MENU_CAT_LIST = "MENU_CAT_LIST";
+  static const String CONTACT_PERMISSION_ALLOWED = "CONTACT_PERMISSION_ALLOWED";
+  static const String SECURITY_QUESTIONS = "SECURITY_QUESTIONS_ADDED";
+  static const String PROFILE_PIC = "profile_pic_url";
+  static const String PRIME_WALLET_BALANCE = "prime_wallet_balance";
+  static const String PRIME_WALLET_CURRENCY = "prime_wallet_currency";
+  static const String PRIME_WALLET_ID = "prime_wallet_id";
+  static const String IS_REVIEW_POP_SHOWN = "IS_REVIEW_POP_SHOWN";
+  static const String IS_GIFTING_INTRO_SHOWN = "IS_GIFTING_INTRO_SHOWN";
+  static const String IS_RE_GIFTING_INTRO_SHOWN = "IS_RE_GIFTING_INTRO_SHOWN";
+  static const String FCM = "prime_fcm_token";
+  static const String NOTIFY_DAILY_REMINDER = "NOTIFY_DAILY_REMINDER";
+  static const String PLACES = "PLACES_SUGGESTED";
+  static const String SELECTED_LOCATION = "SELECTED_LOCATION";
+  static const String LOCATION = "LOCATION";
+  static const String DATE_JOINED = "DATE_JOINED";
+  static const String DAILY_TIP = "DAILY_TIP";
+  static const String IMAGE_PERMISSION_ALLOWED = "IMAGE_PERMISSION_ALLOWED";
+  static const String LOCATION_PERMISSION_ALLOWED =
+      "LOCATION_PERMISSION_ALLOWED";
+}
