@@ -1,0 +1,137 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Dart
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+ 
+  ios:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Select latest Xcode
+        run: |
+          ls /Applications | grep Xcode
+          sudo xcode-select -s /Applications/Xcode_16.0.app
+          xcodebuild -version
+
+      - name: Clean Xcode DerivedData
+        run: |
+            rm -rf ~/Library/Developer/Xcode/DerivedData
+            rm -rf ios/Pods ios/Podfile.lock
+
+
+        # --- Caching for faster builds and preventing timeouts ---
+      - name: Cache CocoaPods dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/CocoaPods
+            ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
+    #   - name: Cache Xcode DerivedData
+    #     uses: actions/cache@v4
+    #     with:
+    #       path: |
+    #         ~/Library/Developer/Xcode/DerivedData
+    #       key: ${{ runner.os }}-xcode-deriveddata-${{ hashFiles('ios/Podfile.lock') }}-${{ hashFiles('ios/Runner.xcodeproj/project.pbxproj') }}
+    #       restore-keys: |
+    #         ${{ runner.os }}-xcode-deriveddata-
+      # ---------------------------------------------------------
+
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+         
+      - name: Refresh Flutter Configs
+        run: |
+          rm -rf ios/Flutter/Generated.xcconfig
+          flutter clean
+        
+      - name: Install dependencies
+        run: flutter pub get
+
+  # ---- CocoaPods ----
+      - name: Install CocoaPods and install Pod dependencies
+        run: |
+          cd ios
+          pod install --repo-update
+
+
+#Instal Ruby first before fastlane
+      - name: Set up Ruby 3.2
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: false
+          working-directory: ios
+
+      - name: Install dependencies
+        working-directory: ios
+        run: |
+          bundle update CFPropertyList
+          bundle install
+
+
+ # ---- Install Fastlane ----
+      #- name: Install fastlane
+        #run: sudo gem install fastlane
+
+      #Setup iOS signing (certificates & provisioning profiles)
+      - name: Setup iOS Signing (Fastlane Match)
+      
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_KEY_CONTENT }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_PAT: ${{ secrets.MATCH_GIT_PAT }}
+          CI: true
+          #FLUTTER_ROOT: /opt/hostedtoolcache/flutter/3.13.0-stable/x64  # your Flutter path
+          
+        run: |
+          # Use HTTPS URL with secret expanded
+          export MATCH_GIT_URL="https://$MATCH_GIT_PAT@github.com/JamperCin/provisioning_profile_certificates.git"
+
+      # Run Fastlane lanes
+      - name: Run Fastlane build and upload
+        env:
+            # Use the environment variable set by the subosito/flutter-action
+          FLUTTER_ROOT: ${{ env.FLUTTER_ROOT }}
+          # Add flutter bin to the PATH so the Xcode script can find the 'flutter' command
+          PATH: ${{ env.FLUTTER_ROOT }}/bin:${{ env.PUB_CACHE }}/bin:${{ env.PATH }}
+
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_KEY_CONTENT }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_PAT: ${{ secrets.MATCH_GIT_PAT }}
+          MATCH_GIT_URL: https://${{ secrets.MATCH_GIT_PAT }}@github.com/JamperCin/provisioning_profile_certificates.git
+
+        run: |
+          cd ios
+            #echo "KEY_ID = $APP_STORE_CONNECT_API_KEY_ID"
+            export MATCH_GIT_URL="https://$MATCH_GIT_PAT@github.com/JamperCin/provisioning_profile_certificates.git"
+            export FLUTTER_ROOT=${FLUTTER_ROOT}   # ensure Xcode script sees it
+            bundle exec fastlane beta --verbose | tee fastlane.log
+
+      - name: Upload Fastlane log
+        if: failure()
+        run: |
+          printf "\n=== gym log start ===\n"
+          sed -n '1,500p' "/Users/runner/Library/Logs/gym/Prime EGift-Runner.log" || true
+          printf "\n=== gym log end ===\n"
