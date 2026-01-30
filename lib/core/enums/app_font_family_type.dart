@@ -1,0 +1,1 @@
+enum AppFontFamilyType { lexend, sans }

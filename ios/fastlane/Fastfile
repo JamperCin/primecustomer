@@ -1,0 +1,168 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+
+
+#-----------------------------------------------------------------------------------------
+# Helper methods for versioning pubspec.yaml
+#-----------------------------------------------------------------------------------------
+
+def get_pubspec_version
+  pubspec = File.read("../../pubspec.yaml")
+  version_line = pubspec.lines.find { |line| line.start_with?("version:") }
+  version = version_line.split(":").last.strip
+  return version
+end
+
+
+def increment_version_name(version)
+  major, minor, patch = version.split(".").map(&:to_i)
+
+  if patch < 9
+    patch += 1
+  else
+    patch = 0
+    if minor < 9
+      minor += 1
+    else
+      minor = 0
+      major += 1
+    end
+  end
+
+  "#{major}.#{minor}.#{patch}"
+end
+
+
+def update_pubspec(new_version_name, new_build_number)
+  pubspec_path = "../../pubspec.yaml"
+  pubspec = File.read(pubspec_path)
+
+  new_version_line = "version: #{new_version_name}+#{new_build_number}"
+  updated_pubspec = pubspec.gsub(/^version: .+$/, new_version_line)
+
+  File.write(pubspec_path, updated_pubspec)
+  puts("Updated pubspec.yaml to version #{new_version_name}+#{new_build_number}")
+end
+
+# In your Fastfile
+
+def check_version_and_abort_if_needed(local_version, store_version)
+  if local_version <= store_version
+    UI.user_error!("❌ Fastlane aborted: The local version code (#***local_version***) in pubspec.yaml is not higher than the existing store version code (#***store_version***). Please increment the version code.")
+  else
+    UI.success("✅ Version code check passed: Local version code (#{local_version}) is higher than the store version code (#{store_version}). Proceeding with the build.")
+  end
+end
+
+#-----------------------------------------------------------------------------------------
+# End of helper methods for versioning pubspec.yaml
+#-----------------------------------------------------------------------------------------`
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Build and upload to TestFlight"
+  lane :beta do
+
+    # --- 1. Authenticate with App Store Connect ---
+    app_store_connect_api_key(
+      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+      issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
+      key_content: ENV["APP_STORE_CONNECT_KEY_CONTENT"],
+      is_key_content_base64: true
+    )
+
+    # --- 2. Create and unlock CI keychain ---
+    keychain_path = File.expand_path("~/Library/Keychains/build.keychain")
+    create_keychain(
+      path: keychain_path,
+      password: ENV["MATCH_PASSWORD"],
+      default_keychain: true,
+      unlock: true,
+      timeout: 3600
+    )
+
+    # --- 3. Install certificates + provisioning profiles ---
+    match(
+      type: "appstore",
+      readonly: false,
+      git_url: ENV["MATCH_GIT_URL"],
+      keychain_name: "build.keychain",
+      keychain_password: ENV["MATCH_PASSWORD"]
+    )
+
+    # --- 4. Ensure keychain stays unlocked ---
+    sh "security set-keychain-settings -lut 21600 #{keychain_path}"
+
+    #NEW ADDITION
+    # 5.1 Fetch the latest build number
+  # If you don't provide a 'version', it returns the latest build of the latest version.
+  build_number = latest_testflight_build_number(
+    app_identifier: "com.jackbuild.prime.customer", # Automatically uses Appfile if available
+    api_key: lane_context[SharedValues::APP_STORE_CONNECT_API_KEY] # Recommended for 2026
+  )
+
+  # 5.2 Access the Version Name (e.g., "1.2.0") from lane_context
+  version_name = lane_context[SharedValues::LATEST_TESTFLIGHT_VERSION]
+
+  puts "Latest TestFlight Version: #{version_name}"
+  puts "Latest TestFlight Build Number: #{build_number}"
+
+
+  # 5.3. Increment current version name eg: (1.0.8 -> 1.0.9)
+    new_version_name = increment_version_name(version_name)
+    puts("New version name: #{new_version_name}")
+
+  # 5.4. Increment appstore build number
+    new_build_number = build_number + 1
+    puts("New build number and version name: #{new_version_name} #{new_build_number}")
+
+  # 5.5. Update pubspec.yaml
+    update_pubspec(new_version_name, new_build_number)
+
+  # 5.6. Update Xcode project
+     increment_build_number(
+        xcodeproj: "../ios/Runner.xcodeproj",
+        build_number: new_build_number
+      )
+    increment_version_number(version_number: new_version_name)
+
+    sh "sed -i '' 's/\\+.*$/+#{new_build_number}/' ../../pubspec.yaml"
+
+    clear_derived_data
+
+    # --- 6. Build IPA ---
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "app-store",
+      clean: true,
+      include_bitcode: false,
+      export_options: {
+        provisioningProfiles: {
+          "com.jackbuild.prime.customer" => "match AppStore com.jackbuild.prime.customer"
+        }
+      }
+    )
+
+    # --- 7. Upload to TestFlight ---
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      changelog: "Automated GitHub Actions build"
+    )
+  end
+end
+

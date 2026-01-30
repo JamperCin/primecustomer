@@ -1,0 +1,15 @@
+git_url("git@github.com:JamperCin/provisioning_profile_certificates.git")
+
+storage_mode("git")
+
+type("appstore") # The default type, can be: appstore, adhoc, enterprise or development
+
+git_branch("prime-customer-certs") 
+
+app_identifier(["com.jackbuild.prime.customer"])
+username("hensu@me.com") # Your Apple Developer Portal username
+
+# For all available options run `fastlane match --help`
+# Remove the # in the beginning of the line to enable the other options
+
+# The docs are available on https://docs.fastlane.tools/actions/match

@@ -21,7 +21,7 @@ jobs:
       - name: Select latest Xcode
         run: |
           ls /Applications | grep Xcode
-          sudo xcode-select -s /Applications/Xcode_16.0.app
+          sudo xcode-select -s /Applications/Xcode_26.2.app
           xcodebuild -version
 
       - name: Clean Xcode DerivedData

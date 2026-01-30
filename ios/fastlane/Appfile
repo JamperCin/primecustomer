@@ -1,0 +1,7 @@
+app_identifier("com.jackbuild.prime.customer") # Your iOS Bundle ID
+apple_id("hensu@me.com")   # Your Apple ID
+itc_team_id("105165805")               # Your App Store Connect Team ID
+team_id("DHT9273BAR")                 # Your Apple Developer Portal Team ID
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile
